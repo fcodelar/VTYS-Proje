@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Spor Salonu Yonetim</title>
+</head>
+<body>
+<h1>Spor Salonu Yonetim Arayuzu</h1>
+
+<h2>Uyeler</h2>
+<button id="listeleUyeler">Uyeleri Listele</button>
+<div id="uyelerContainer"></div>
+<h3>Uye Ekle</h3>
+<input type="text" id="yeniUyeAd" placeholder="Ad"/>
+<input type="text" id="yeniUyeSoyad" placeholder="Soyad"/>
+<input type="date" id="yeniUyeDogumTarihi" placeholder="Dogum Tarihi (YYYY-MM-DD)"/>
+<input type="text" id="yeniUyeCinsiyet" placeholder="Cinsiyet"/>
+<input type="text" id="yeniUyeIletisim" placeholder="Iletisim Bilgisi"/>
+<input type="number" id="yeniUyePlanId" placeholder="Plan ID"/>
+<button id="uyeEkle">Uye Ekle</button>
+
+
+<h3>Uye Sil</h3>
+<input type="number" id="silUyeId" placeholder="Uye ID"/>
+<button id="uyeSil">Uye Sil</button>
+<h2>Uye Bilgisi Guncelle</h2>
+<input type="number" id="guncelleUyeId" placeholder="Uye ID"><br>
+<input type="text" id="guncelleUyeAd" placeholder="Ad"><br>
+<input type="text" id="guncelleUyeSoyad" placeholder="Soyad"><br>
+<input type="date" id="guncelleUyeDogumTarihi" placeholder="Dogum Tarihi"><br>
+<input type="text" id="guncelleUyeCinsiyet" placeholder="Cinsiyet"><br>
+<input type="text" id="guncelleUyeIletisim" placeholder="Iletisim Bilgisi"><br>
+<input type="number" id="guncelleUyePlanId" placeholder="Plan ID"><br>
+<button id="uyeGuncelle">Uye Guncelle</button>
+
+<script>
+  document.getElementById('uyeGuncelle').addEventListener('click', async () => {
+    const id = document.getElementById('guncelleUyeId').value;
+    const ad = document.getElementById('guncelleUyeAd').value;
+    const soyad = document.getElementById('guncelleUyeSoyad').value;
+    const dogum_tarihi = document.getElementById('guncelleUyeDogumTarihi').value;
+    const cinsiyet = document.getElementById('guncelleUyeCinsiyet').value;
+    const iletisim_bilgisi = document.getElementById('guncelleUyeIletisim').value;
+    const plan_id = document.getElementById('guncelleUyePlanId').value;
+
+    const res = await fetch(`/uyeler/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ad, soyad, dogum_tarihi, cinsiyet, iletisim_bilgisi, plan_id }),
+    });
+
+    const data = await res.text();
+    alert(data);
+  });
+</script>
+
+
+<h2>Urunler</h2>
+<button id="listeleUrunler">Urunleri Listele</button>
+<div id="urunlerContainer"></div>
+<h3>Urun Ekle</h3>
+<input type="text" id="yeniUrunAdi" placeholder="Urun Adi"/>
+<input type="text" id="yeniUrunAciklama" placeholder="Aciklama"/>
+<input type="number" step="0.01" id="yeniUrunFiyat" placeholder="Fiyat"/>
+<input type="number" id="yeniUrunStok" placeholder="Stok Miktari"/>
+<button id="urunEkle">Urun Ekle</button>
+
+<h3>Urun Sil</h3>
+<input type="number" id="silUrunId" placeholder="Urun ID"/>
+<button id="urunSil">Urun Sil</button>
+<h2>Urun Bilgisi Guncelle</h2>
+<input type="number" id="guncelleUrunId" placeholder="Urun ID"><br>
+<input type="text" id="guncelleUrunAdi" placeholder="Urun Adi"><br>
+<input type="text" id="guncelleUrunAciklama" placeholder="Aciklama"><br>
+<input type="number" id="guncelleUrunFiyat" placeholder="Fiyat"><br>
+<input type="number" id="guncelleUrunStok" placeholder="Stok Miktari"><br>
+<button id="urunGuncelle">Urun Guncelle</button>
+
+<script>
+  document.getElementById('urunGuncelle').addEventListener('click', async () => {
+    const id = document.getElementById('guncelleUrunId').value;
+    const urun_adi = document.getElementById('guncelleUrunAdi').value;
+    const aciklama = document.getElementById('guncelleUrunAciklama').value;
+    const fiyat = document.getElementById('guncelleUrunFiyat').value;
+    const stok_miktari = document.getElementById('guncelleUrunStok').value;
+
+    const res = await fetch(`/urunler/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ urun_adi, aciklama, fiyat, stok_miktari }),
+    });
+
+    const data = await res.text();
+    alert(data);
+  });
+</script>
+
+
+<h2>Aylık Odeme Hesapla ve Göster</h2>
+<button id="aylikOdeme">Aylik Odeme Hesapla ve Goster</button>
+<div id="odemelerSonuc"></div>
+
+<script>
+document.getElementById('aylikOdeme').addEventListener('click', async () => {
+  const res = await fetch('/aylikUyeOdemeHesapla', { method: 'POST' });
+  const data = await res.json(); // JSON formatında ödeme bilgilerini alıyoruz
+
+  // Tabloyu oluştur
+  let html = '<table border="1"><tr><th>Odeme ID</th><th>Uye ID</th><th>Ad</th><th>Soyad</th><th>Tutar</th><th>Odeme Tarihi</th><th>Odeme Yontemi</th></tr>';
+  data.forEach(odeme => {
+    html += `<tr>
+               <td>${odeme.odeme_id}</td>
+               <td>${odeme.uye_id}</td>
+               <td>${odeme.ad}</td>
+               <td>${odeme.soyad}</td>
+               <td>${odeme.tutar}</td>
+               <td>${odeme.odeme_tarihi}</td>
+               <td>${odeme.odeme_yontemi}</td>
+             </tr>`;
+  });
+  html += '</table>';
+
+  document.getElementById('odemelerSonuc').innerHTML = html;
+});
+</script>
+
+
+
+
+<h2>Uye Plan Adi Sorgula</h2>
+<input type="number" id="planSorguUyeId" placeholder="Uye ID"/>
+<button id="planSorguButon">Plan Adi Sorgula</button>
+<div id="planAdiSonuc"></div>
+
+<script>
+document.getElementById('listeleUyeler').addEventListener('click', async () => {
+  const res = await fetch('/uyeler');
+  const data = await res.json();
+  const container = document.getElementById('uyelerContainer');
+  container.innerHTML = '<ul>' + data.map(u => `<li>${u.uye_id} - ${u.ad} ${u.soyad} (Plan:${u.plan_id})</li>`).join('') + '</ul>';
+});
+
+document.getElementById('uyeEkle').addEventListener('click', async () => {
+  const ad = document.getElementById('yeniUyeAd').value;
+  const soyad = document.getElementById('yeniUyeSoyad').value;
+  const plan_id = Number(document.getElementById('yeniUyePlanId').value);
+  const dogum_tarihi = document.getElementById('yeniUyeDogumTarihi').value;  // YYYY-MM-DD formatında gelir
+  const cinsiyet = document.getElementById('yeniUyeCinsiyet').value;
+  const iletisim_bilgisi = document.getElementById('yeniUyeIletisim').value;
+
+  const res = await fetch('/uyeler', {
+    method:'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ad, soyad, plan_id, dogum_tarihi, cinsiyet, iletisim_bilgisi})
+  });
+  const data = await res.text();
+  alert('Sonuc: ' + data);
+});
+
+
+document.getElementById('uyeSil').addEventListener('click', async()=>{
+  const id = document.getElementById('silUyeId').value;
+  const res = await fetch('/uyeler/'+id, {method:'DELETE'});
+  const data = await res.text();
+  alert(data);
+});
+
+document.getElementById('listeleUrunler').addEventListener('click', async () => {
+  const res = await fetch('/urunler');
+  const data = await res.json();
+  const container = document.getElementById('urunlerContainer');
+  container.innerHTML = '<ul>' + data.map(u => `<li>${u.urun_id} - ${u.urun_adi} (${u.fiyat} TL, Stok: ${u.stok_miktari})</li>`).join('') + '</ul>';
+});
+
+document.getElementById('urunEkle').addEventListener('click', async()=>{
+  const urun_adi = document.getElementById('yeniUrunAdi').value;
+  const aciklama = document.getElementById('yeniUrunAciklama').value;
+  const fiyat = Number(document.getElementById('yeniUrunFiyat').value);
+  const stok_miktari = Number(document.getElementById('yeniUrunStok').value);
+
+  const res = await fetch('/urunler', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({urun_adi, aciklama, fiyat, stok_miktari})
+  });
+  const data = await res.text();
+  alert('Sonuc: ' + data);
+});
+
+document.getElementById('urunSil').addEventListener('click', async()=>{
+  const id = document.getElementById('silUrunId').value;
+  const res = await fetch('/urunler/'+id,{method:'DELETE'});
+  const data = await res.text();
+  alert(data);
+});
+
+document.getElementById('planSorguButon').addEventListener('click', async () => {
+  const id = document.getElementById('planSorguUyeId').value;
+  const res = await fetch(`/uyeler/${id}/plan_adi`);
+  const data = await res.json();
+  document.getElementById('planAdiSonuc').innerText = 'Plan Adi: ' + data.plan_adi;
+});
+</script>
+</body>
+<body>
+  <h1>Fonksiyonlar Arayüzü</h1>
+
+  <!-- Fonksiyon 1: UyePlanAdiDondur -->
+  <h3>Üye Plan Adı Bul</h3>
+  <input type="number" id="uye_id" placeholder="Üye ID">
+  <button onclick="getUyePlanAdi()">Getir</button>
+  <p>Sonuç: <span id="uye_plan_adi"></span></p>
+
+  <!-- Fonksiyon 2: CalisanDersSayisi -->
+  <h3>Çalışan Ders Sayısı Bul</h3>
+  <input type="number" id="calisan_id" placeholder="Çalışan ID">
+  <button onclick="getCalisanDersSayisi()">Getir</button>
+  <p>Sonuç: <span id="calisan_ders_sayisi"></span></p>
+
+  <!-- Fonksiyon 3: DersToplamRezervasyonSayisi -->
+  <h3>Ders Toplam Rezervasyon Sayısı</h3>
+  <input type="number" id="ders_id" placeholder="Ders ID">
+  <button onclick="getDersRezervasyonSayisi()">Getir</button>
+  <p>Sonuç: <span id="ders_rezervasyon_sayisi"></span></p>
+
+  <!-- Fonksiyon 4: EtkinlikListesiMetin -->
+  <h3>Etkinlik Listesi</h3>
+  <button onclick="getEtkinlikListesi()">Listele</button>
+  <p>Sonuç: <span id="etkinlik_listesi"></span></p>
+
+  <script>
+    async function getUyePlanAdi() {
+      const uyeId = document.getElementById('uye_id').value;
+      const res = await fetch(`/fonksiyon/UyePlanAdiDondur/${uyeId}`);
+      const data = await res.json();
+      document.getElementById('uye_plan_adi').textContent = data.plan_adi || 'Sonuç Bulunamadı';
+    }
+
+    async function getCalisanDersSayisi() {
+      const calisanId = document.getElementById('calisan_id').value;
+      const res = await fetch(`/fonksiyon/CalisanDersSayisi/${calisanId}`);
+      const data = await res.json();
+      document.getElementById('calisan_ders_sayisi').textContent = data.ders_sayisi || 'Sonuç Bulunamadı';
+    }
+
+    async function getDersRezervasyonSayisi() {
+      const dersId = document.getElementById('ders_id').value;
+      const res = await fetch(`/fonksiyon/DersToplamRezervasyonSayisi/${dersId}`);
+      const data = await res.json();
+      document.getElementById('ders_rezervasyon_sayisi').textContent = data.rezervasyon_sayisi || 'Sonuç Bulunamadı';
+    }
+
+    async function getEtkinlikListesi() {
+      const res = await fetch('/fonksiyon/EtkinlikListesiMetin');
+      const data = await res.json();
+      document.getElementById('etkinlik_listesi').textContent = data.etkinlikler || 'Sonuç Bulunamadı';
+    }
+  </script>
+</body>
+</html>
